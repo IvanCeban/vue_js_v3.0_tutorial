@@ -9,20 +9,33 @@
   <body>
     <div class="container" id="app">
       <div class="card">
-        <h1>{{ title }}</h1>
+        <h1 :style="{
+          color: inputValue.length < 5 ? 'darkred' : 'darkgreen',
+          fontSize: inputValue.length < 5 ? '1.5rem' : '2rem',
+        }">
+          {{ title }}
+        </h1>
         <div class="form-control">
           <input
               type="text"
-              v-bind:placeholder="placeholderName"
-              v-bind:value="inputValue"
-              v-on:input="inputChangeHandler"
+              :placeholder="placeholderName"
+              v-model="inputValue"
+              @keypress.enter="addNewNote"
           />
         </div>
-        <button class="btn">Add</button>
+        <button class="btn" @click="addNewNote">Add</button>
         <hr />
-        <ul class="list">
-          <li class="list-item" v-for="note in notes">{{ note }}</li>
+        <ul class="list" v-if="notes.length">
+          <li class="list-item" v-for="(note, idx) in notes">
+            <span :class="['bold', {'primary' : note.length >= 5}]">({{idx + 1}}) {{ toUpperCase(note) }}</span>
+            <button class="btn danger" @click="removeNote(idx)">Remove</button>
+          </li>
+          <hr />
+          <li>
+            <strong>Overall: {{ notes.length }}</strong> | Doubled: {{ doubleCount }}
+          </li>
         </ul>
+        <p v-else>No notes found</p>
       </div>
     </div>
     <script src="https://unpkg.com/vue@next"></script>
